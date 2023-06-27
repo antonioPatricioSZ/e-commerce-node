@@ -1,13 +1,13 @@
 import { config } from "dotenv";
 config()
 import express from "express";
+import helmet from "helmet";
 import { conectDB } from "./db/connection.js";
 import routesController from './routes/Router.js'
 import cookieParser from "cookie-parser";
 import fileUpload from 'express-fileupload'
 import rateLimiter from "express-rate-limit";
 import cors from "cors";
-import xss from "xss";
 import mongoSanitaze from "express-mongo-sanitize";
 
 const app = express()
@@ -19,8 +19,8 @@ app.use(rateLimiter({
    max: 60
 }))
 
+app.use(helmet())
 app.use(cors())
-app.use(xss())
 app.use(mongoSanitaze())
 
 app.use(express.json())
