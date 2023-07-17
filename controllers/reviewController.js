@@ -85,9 +85,9 @@ const updateReview = async (req, res) => {
    //    return res.status(403).json({ message: "Unauthorized to access this route" })
    // }
 
-   if(req.user.userId !== review.user.toString()) {
-      return res.status(403).json({ message: "Unauthorized to access this route" })
-   }
+   // if(req.user.userId !== review.user.toString()) {
+   //    return res.status(403).json({ message: "Unauthorized to access this route" })
+   // }
 
    review.title = title
    review.rating = rating

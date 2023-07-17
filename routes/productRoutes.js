@@ -4,8 +4,8 @@ import { authenticateUser, authorizePermissions } from "../middlewares/authentic
 ''
 
 const router = Router()
-
-router.post("/", authenticateUser, authorizePermissions("admin"), createProduct)
+// authenticateUser, authorizePermissions("admin"), 
+router.post("/", createProduct)
 router.get("/", getAllProducts)
 
 router.post("/uploadImage", authenticateUser, authorizePermissions("admin"), uploadImage)

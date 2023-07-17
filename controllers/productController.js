@@ -2,31 +2,59 @@ import { Product } from '../models/Product.js'
 
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { Review } from '../models/Review.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const createProduct = async (req, res) => {
-   req.body.user = req.user.userId
+   ///req.body.user = req.user.userId
    const product = await Product.create(req.body)
    res.status(201).json(product)
 }
 
 const getAllProducts = async (req, res) => {
-   const products = await Product.find()
+   const products = await Product.find({})
    res.json(products)
 }
 
 const getSingleProduct = async (req, res) => {
+   
    const { id: productId } = req.params
+ 
+   const productReviews = await Product.findById(productId)
+   .then(async (produto) => {
+     if (produto) {
+       return await Review.find({ product: produto._id })
+         .then(reviews => {
+            return reviews
+            //console.log('Reviews relacionadas ao produto:', reviews)
+         })
+         .catch(error => {
+           console.error('Erro ao buscar as reviews:', error);
+         });
+     } else {
+       console.log('Produto não encontrado');
+     }
+   })
+   .catch(error => {
+     console.error('Erro ao buscar o produto:', error);
+   });
 
-   const product = await Product.findById(productId)
+   const singleProduct = await Product.findOne({ _id: productId })
 
-   if(!product) {
+   if(!productReviews) {
       return res.status(404).json({ message: "Product not found" })
    }
+   console.log(productReviews)
 
-   res.json(product)
+   const soma = productReviews.reduce((accumulator, currentValue) => {
+      return currentValue.rating + accumulator
+   }, 0);
+
+   const media = soma / productReviews.length
+
+   res.json({ productReviews: productReviews, mediaReviews:  media, singleProduct: singleProduct, qtdReviews: productReviews.length })
    
 }
 

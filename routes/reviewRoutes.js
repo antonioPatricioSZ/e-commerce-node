@@ -10,7 +10,7 @@ router.get("/", getAllReviews)
 
 router.get("/:id", getSingleReview)
 
-router.patch("/:id", authenticateUser, updateReview)
+router.patch("/:id", updateReview)
 router.delete("/:id", authenticateUser, deleteReview)
 
 

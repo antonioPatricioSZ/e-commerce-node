@@ -1,6 +1,7 @@
 import { User } from "../models/User.js"
 import { attachCookiesToResponse } from "../utils/jwt.js"
 import bcrypt from "bcryptjs"
+import { sendEmailToRedefination } from "../utils/sendEmail.js"
 
 const register = async (req, res) => {
    
@@ -69,6 +70,10 @@ const login = async (req, res) => {
    }
 
    attachCookiesToResponse({ res: res, user: tokenUser })
+   await sendEmailToRedefination({
+      name: user.name,
+      email: "souzapatricio798@gmail.com"
+   })
    
    return res.status(200).json({ message: "Tudo Ok!" })
 

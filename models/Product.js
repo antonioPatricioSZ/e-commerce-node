@@ -8,11 +8,12 @@ const ProductSchema = mongoose.Schema({
       default: 0
    },
    description: String,
-   image: String,
+   images: [String],
    category: {
       type: String,
       enum: ["office", "kitchen", "bedroom"]
    },
+   stock: Number,
    company: {
       type: String,
       enum: ["ikea", "liddy", "marcos"]
@@ -46,17 +47,17 @@ const ProductSchema = mongoose.Schema({
       ref: "User"
    }
 
-}, {timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } } )
+}, {timestamps: true } )
 
-ProductSchema.virtual('reviews', {
-  ref: 'Review',
-  localField: '_id',
-  foreignField: 'product',
-  justOne: false,
-});
+// ProductSchema.virtual('reviews', {
+//   ref: 'Review',
+//   localField: '_id',
+//   foreignField: 'product',
+//   justOne: false,
+// });
 
-ProductSchema.pre('remove', async function (next) {
-  await this.model('Review').deleteMany({ product: this._id });
-});
+// ProductSchema.pre('remove', async function (next) {
+//   await this.model('Review').deleteMany({ product: this._id });
+// });
 
 export const Product = mongoose.model("Product", ProductSchema)
