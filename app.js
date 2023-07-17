@@ -22,7 +22,7 @@ const port = process.env.PORT || 5000
 app.use(cors({ origin: "*" }))
 app.use(helmet())
 app.use((req, res, next) => {
-   res.set('Referrer-Policy', 'no-referrer'); 
+   res.set('Referrer-Policy', 'unsafe-url'); 
    next();
  });
 //app.use(mongoSanitaze())
