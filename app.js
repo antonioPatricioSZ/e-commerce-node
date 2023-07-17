@@ -21,6 +21,10 @@ const port = process.env.PORT || 5000
 
 app.use(cors({ origin: "*" }))
 app.use(helmet())
+app.use((req, res, next) => {
+   res.set('Referrer-Policy', 'no-referrer'); 
+   next();
+ });
 //app.use(mongoSanitaze())
 
 app.use(express.json( { limit: "10mb" } ))
