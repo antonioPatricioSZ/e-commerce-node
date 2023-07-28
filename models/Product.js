@@ -1,63 +1,53 @@
 import mongoose from "mongoose";
 
-const ProductSchema = mongoose.Schema({
-
-   name: String,
-   price: {
+const ProductSchema = mongoose.Schema(
+  {
+    name: String,
+    price: {
       type: Number,
-      default: 0
-   },
-   description: String,
-   images: [String],
-   category: {
+      default: 0,
+    },
+    description: String,
+    images: [String],
+    category: {
       type: String,
-      enum: ["office", "kitchen", "bedroom"]
-   },
-   stock: Number,
-   company: {
+      enum: ["office", "kitchen", "bedroom"],
+    },
+    stock: Number,
+    company: {
       type: String,
-      enum: ["ikea", "liddy", "marcos"]
-   },
-   colors: {
+      enum: ["ikea", "liddy", "marcos"],
+    },
+    colors: {
       type: [String],
-      default: [ "#e1e" ]
-   },
-   featured: {
+      default: ["#e1e"],
+    },
+    featured: {
       type: Boolean,
-      default: false
-   },
-   freeShipping: {
+      default: false,
+    },
+    freeShipping: {
       type: Boolean,
-      default: false
-   },
-   inventory: {
+      default: false,
+    },
+    inventory: {
       type: Number,
-      default: 15
-   },
-   averageRating: {
+      default: 15,
+    },
+    averageRating: {
       type: Number,
-      default: 0
-   },
-   numOfReviews: {
+      default: 0,
+    },
+    numOfReviews: {
       type: Number,
-      default: 0
-   },
-   user: {
+      default: 0,
+    },
+    user: {
       type: mongoose.Types.ObjectId,
-      ref: "User"
-   }
+      ref: "User",
+    },
+  },
+  { timestamps: true }
+);
 
-}, {timestamps: true } )
-
-// ProductSchema.virtual('reviews', {
-//   ref: 'Review',
-//   localField: '_id',
-//   foreignField: 'product',
-//   justOne: false,
-// });
-
-// ProductSchema.pre('remove', async function (next) {
-//   await this.model('Review').deleteMany({ product: this._id });
-// });
-
-export const Product = mongoose.model("Product", ProductSchema)
+export const Product = mongoose.model("Product", ProductSchema);

@@ -2,15 +2,16 @@ import { isTokenValidate } from '../utils/jwt.js'
 
 export const authenticateUser = (req, res, next) => {
 
-   const token = req.signedCookies.token
-   console.log(req.signedCookies)
-   console.log("token: " + token)
-   if(!token) {
+   const bearer = req.headers.authorization
+   if(!bearer) {
       return res.status(401).json({ message: "Authentication Invalid." })
    }
+
+   const token = bearer.split(" ")[1]
+
    try {
-      const { name, userId, role } = isTokenValidate({ token: token})
-      req.user = { name, userId, role }
+      const { userId } = isTokenValidate({ token: token})
+      req.user = { userId }
       next()
    } catch (error) {
       return res.status(401).json({ message: "Authentication invalid." })

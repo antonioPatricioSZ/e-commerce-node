@@ -1,95 +1,80 @@
-import { User } from "../models/User.js"
-import { attachCookiesToResponse } from "../utils/jwt.js"
-import bcrypt from "bcryptjs"
-import { sendEmailToRedefination } from "../utils/sendEmail.js"
+import { User } from "../models/User.js";
+import { createTokenJWT } from "../utils/jwt.js";
+import { sendEmailToRedefination } from "../utils/sendEmail.js";
 
 const register = async (req, res) => {
-   
-   const { name, email, password } = req.body
+  const { name, email, password } = req.body;
 
-   const emailAlreadyExists = await User.findOne({email})
-   if(emailAlreadyExists) {
-      return res.status(422).json({message: "Email already exists."})
-   }
+  const emailAlreadyExists = await User.findOne({ email });
+  if (emailAlreadyExists) {
+    return res.status(422).json({ message: "Email already exists." });
+  }
 
-   const isFirstAccount = await User.countDocuments({}) === 0
-   const role = isFirstAccount ? "admin" : "user"
+  const isFirstAccount = (await User.countDocuments({})) === 0;
+  const role = isFirstAccount ? "ADMIN" : "USER";
 
-   const newUser = {
-      name,
-      email,
-      password,
-      role
-   }
+  const newUser = {
+    name,
+    email,
+    password,
+    role,
+  };
 
-   try {
+  try {
+    const user = await User.create(newUser);
+    const tokenUser = {
+      userId: user._id,
+    };
 
-      const user = await User.create(newUser)
-      const tokenUser = {
-         name: user.name,
-         userId: user._id,
-         role: user.role
-      }
+    const token = createTokenJWT({ payload: tokenUser });
 
-      attachCookiesToResponse({ res: res, user: tokenUser })
-      
-      return res.status(201).json({user: user})
-
-   } catch (error) {
-      console.log(error)
-   }
-
-}
+    return res.status(201).json({ token: token, role: user.role });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const login = async (req, res) => {
-   const { email, password } = req.body
-   console.log(req.body);
-   console.log("user: " + req.user);
+  const { email, password } = req.body;
 
-   if(!email || !password) {
-      return res.status(422).json({message: "Please provide email and password."})
-   }
+  if (!email || !password) {
+    return res
+      .status(422)
+      .json({ message: "Please provide email and password." });
+  }
 
-   const user = await User.findOne({ email: email })
-   console.log(user)
+  const user = await User.findOne({ email: email });
 
-   if(!user) {
-      return res.status(422).json({message: "Invalid credentials."})
-   }
+  if (!user) {
+    return res.status(422).json({ message: "Usuário ou senha inválidos." });
+  }
 
-   const isPasswordCorrect = await user.comparePassword(password)
-   
-   if(!isPasswordCorrect) {
-      return res.status(422).json({message: "Invalid credentials."})
-   }
+  const isPasswordCorrect = await user.comparePassword(password);
 
-   const tokenUser = {
-      name: user.name,
-      userId: user._id,
-      role: user.role
-   }
+  if (!isPasswordCorrect) {
+    return res.status(422).json({ message: "Usuário ou senha inválidos." });
+  }
 
-   attachCookiesToResponse({ res: res, user: tokenUser })
-   await sendEmailToRedefination({
-      name: user.name,
-      email: "souzapatricio798@gmail.com"
-   })
-   
-   return res.status(200).json({ message: "Tudo Ok!" })
+  const tokenUser = {
+    userId: user._id,
+    role: user.role
+  };
 
-}
+  const token = createTokenJWT({ payload: tokenUser });
+  // await sendEmailToRedefination({
+  //   name: user.name,
+  //   email: "souzapatricio798@gmail.com",
+  // });
+
+  return res.status(200).json({ token: token, role: user.role });
+};
 
 const logout = async (req, res) => {
-   res.cookie("token", "logout", {
-      HttpOnly: true,
-      expires: new Date(Date.now() + 1000)
-   })
-   res.status(200).json({message: "User logged out!"})
-}
+  res.cookie("token", "logout", {
+    HttpOnly: true,
+    expires: new Date(Date.now() + 1000),
+  });
+  res.status(200).json({ message: "User logged out!" });
+};
 
-
-export {
-   register,
-   login,
-   logout
-}
+export { register, login, logout };

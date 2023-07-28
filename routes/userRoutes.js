@@ -1,11 +1,12 @@
 import { Router } from "express"
 import { getAllUsers, getSingleUser, showCurrentUser, updateUser, updateUserPassword } from "../controllers/userController.js"
-import { authenticateUser, authorizePermissions } from "../middlewares/authentication.js"
-''
+import { authenticateUser } from "../middlewares/authentication.js"
+import { authRole } from "../middlewares/authorization.js"
+
 
 const router = Router()
 
-router.get("/", authenticateUser, authorizePermissions("admin", "owner"), getAllUsers)
+router.get("/", authenticateUser, authRole("ADMIN"), getAllUsers)
 router.get("/showMe", authenticateUser, showCurrentUser)
 router.patch("/updateUser", authenticateUser, updateUser)
 router.patch("/updateUserPassword", authenticateUser, updateUserPassword)

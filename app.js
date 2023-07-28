@@ -5,7 +5,6 @@ import helmet from "helmet";
 import { conectDB } from "./db/connection.js";
 import routesController from './routes/Router.js'
 import cookieParser from "cookie-parser";
-import fileUpload from 'express-fileupload'
 import rateLimiter from "express-rate-limit";
 import cors from "cors";
 import mongoSanitaze from "express-mongo-sanitize";
@@ -31,7 +30,7 @@ app.use(express.json( { limit: "10mb" } ))
 app.use(cookieParser(process.env.JWT_SECRET))
 
 app.use(express.static("./public"))
-app.use(fileUpload())
+
 
 app.use("/api/v1", routesController)
 
