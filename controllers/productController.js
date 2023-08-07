@@ -19,6 +19,7 @@ const getSingleProduct = async (req, res) => {
     .then(async (produto) => {
       if (produto) {
         return await Review.find({ product: produto._id })
+          .populate({ path: "user", select: "_id name" }).populate({ path: "product", select: "_id name" })
           .then((reviews) => {
             return reviews;
             //console.log('Reviews relacionadas ao produto:', reviews)

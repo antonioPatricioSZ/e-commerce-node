@@ -6,7 +6,7 @@ import { authenticateUser } from "../middlewares/authentication.js"
 const router = Router()
 
 router.post("/", authenticateUser, createReview)
-router.get("/", getAllReviews)
+router.get("/:id", getAllReviews)
 
 router.get("/:id", getSingleReview)
 

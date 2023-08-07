@@ -14,7 +14,7 @@ const createReview = async (req, res) => {
    const alreadySubmitted = await Review.findOne({ product: productId, user: reqUserId })
    // se esse review já tiver um produto e um usuário dá erro, mas se for com outro usuario não dá erro
    if(alreadySubmitted) {
-      return res.status(404).json({ message: "Already submmited review for this product" })
+      return res.status(422).json({ message: "Você já fez uma avalição para este produto." })
    }
 
    req.body.user = reqUserId
@@ -24,8 +24,14 @@ const createReview = async (req, res) => {
 }
 
 const getAllReviews = async (req, res) => {
-  
-   const reviews = await Review.find({}).populate("product").populate("user")
+  const {id} = req.params
+   const reviews = await Review.find({product: id}).populate({
+      path: "product",
+      select: "_id name"
+   }).populate({
+      path: "user",
+      select: "_id name email role"
+   })
    res.json({ reviews })
 
 }

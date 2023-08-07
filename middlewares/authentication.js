@@ -3,6 +3,7 @@ import { isTokenValidate } from '../utils/jwt.js'
 export const authenticateUser = (req, res, next) => {
 
    const bearer = req.headers.authorization
+   console.log(req.headers)
    if(!bearer) {
       return res.status(401).json({ message: "Authentication Invalid." })
    }

@@ -10,7 +10,8 @@ const UserSchema = new mongoose.Schema({
       type: String,
       enum: ["ADMIN", "USER"],
       default: "USER"
-   }
+   },
+   image: String
 
 })
 

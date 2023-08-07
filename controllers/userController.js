@@ -20,45 +20,49 @@ const getSingleUser = async (req, res) => {
 };
 
 const showCurrentUser = async (req, res) => {
-  res.json(req.user);
+  const currentUser = await User.findOne({ _id: req.user.userId }).select(
+    "-password -role"
+  );
+  res.json(currentUser);
 };
 
 const updateUser = async (req, res) => {
-  const { name, email } = req.body;
+  const { name } = req.body;
   const userData = {};
 
-  if (name) {
-    userData.name = name;
+  if (!name || name.length === 0) {
+    return res.status(422).json({ message: "Você precisa informar seu nome." });
   }
+  userData.name = name;
 
-  if (email) {
-    userData.email = email;
-  }
+  // if (email) {
+  //   userData.email = email;
+  // }
 
-  if (!name || !email) {
-    return res.status(400).json({ message: "Informe os valores." });
-  }
+  // if (!name || !email) {
+  //   return res.status(400).json({ message: "Informe os valores." });
+  // }
 
-  const emailAlreadyExists = await User.findOne({ email: email });
-  if (emailAlreadyExists) {
-    return res.status(400).json({ message: "Please use another email" });
-  }
+  // const emailAlreadyExists = await User.findOne({ email: email });
+  // if (emailAlreadyExists) {
+  //   return res.status(400).json({ message: "Please use another email" });
+  // }
 
-  const user = await User.findByIdAndUpdate({ _id: req.user.userId }, userData);
+  await User.findByIdAndUpdate({ _id: req.user.userId }, userData);
 
-  const tokenUser = {
-    userId: user._id,
-  };
+  // const tokenUser = {
+  //   userId: user._id,
+  // };
 
-  const token = createTokenJWT({ payload: tokenUser });
+  // const token = createTokenJWT({ payload: tokenUser });
 
-  res.status(200).json({ token: token });
+  res.status(200).json("Usuário Atualizado com sucesso.");
 };
 
 const updateUserPassword = async (req, res) => {
   const { oldPassword, newPassword } = req.body;
 
-  if (!oldPassword || !newPassword) {
+  if (oldPassword.length === 0 || newPassword.length === 0) {
     return res.status(400).json({ message: "Informe os valores." });
   }
   const reqUser = req.user;
@@ -68,7 +72,7 @@ const updateUserPassword = async (req, res) => {
   const isPasswordCorrect = await user.comparePassword(oldPassword);
 
   if (!isPasswordCorrect) {
-    return res.status(400).json({ message: "Senha Errada." });
+    return res.status(400).json({ message: "Senha incorreta." });
   }
 
   user.password = newPassword;
